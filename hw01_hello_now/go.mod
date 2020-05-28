@@ -1,4 +1,4 @@
-module github.com/imflop/ohw/hw01_hello_now
+module github.com/imflop/hw01_hello_now
 
 go 1.14
 
