@@ -2,6 +2,9 @@ package hw04_lru_cache //nolint:golint,stylecheck
 
 import (
 	"github.com/stretchr/testify/require"
+	"math/rand"
+	"strconv"
+	"sync"
 	"testing"
 )
 
@@ -15,61 +18,72 @@ func TestCache(t *testing.T) {
 		_, ok = c.Get("bbb")
 		require.False(t, ok)
 	})
-	//
-	//t.Run("simple", func(t *testing.T) {
-	//	c := NewCache(5)
-	//
-	//	wasInCache := c.Set("aaa", 100)
-	//	require.False(t, wasInCache)
-	//
-	//	wasInCache = c.Set("bbb", 200)
-	//	require.False(t, wasInCache)
-	//
-	//	val, ok := c.Get("aaa")
-	//	require.True(t, ok)
-	//	require.Equal(t, 100, val)
-	//
-	//	val, ok = c.Get("bbb")
-	//	require.True(t, ok)
-	//	require.Equal(t, 200, val)
-	//
-	//	wasInCache = c.Set("aaa", 300)
-	//	require.True(t, wasInCache)
-	//
-	//	val, ok = c.Get("aaa")
-	//	require.True(t, ok)
-	//	require.Equal(t, 300, val)
-	//
-	//	val, ok = c.Get("ccc")
-	//	require.False(t, ok)
-	//	require.Nil(t, val)
-	//})
-	//
-	//t.Run("purge logic", func(t *testing.T) {
-	//	// Write me
-	//})
+
+	t.Run("simple", func(t *testing.T) {
+		c := NewCache(5)
+
+		wasInCache := c.Set("aaa", 100)
+		require.False(t, wasInCache)
+
+		wasInCache = c.Set("bbb", 200)
+		require.False(t, wasInCache)
+
+		val, ok := c.Get("aaa")
+		require.True(t, ok)
+		require.Equal(t, 100, val)
+
+		val, ok = c.Get("bbb")
+		require.True(t, ok)
+		require.Equal(t, 200, val)
+
+		wasInCache = c.Set("aaa", 300)
+		require.True(t, wasInCache)
+
+		val, ok = c.Get("aaa")
+		require.True(t, ok)
+		require.Equal(t, 300, val)
+
+		val, ok = c.Get("ccc")
+		require.False(t, ok)
+		require.Nil(t, val)
+	})
+
+	t.Run("purge logic", func(t *testing.T) {
+		// Write me
+		c := NewCache(2)
+		inCache := c.Set("zzz", 123)
+		require.False(t, inCache)
+
+		inCache = c.Set("xxx", 321)
+		require.False(t, inCache)
+
+		c.Clear()
+		val, ok := c.Get("zzz")
+		require.False(t, ok)
+		require.Nil(t, val)
+	})
 }
 
-//func TestCacheMultithreading(t *testing.T) {
-//	t.Skip() // Remove if task with asterisk completed
-//
-//	c := NewCache(10)
-//	wg := &sync.WaitGroup{}
-//	wg.Add(2)
-//
-//	go func() {
-//		defer wg.Done()
-//		for i := 0; i < 1_000_000; i++ {
-//			c.Set(Key(strconv.Itoa(i)), i)
-//		}
-//	}()
-//
-//	go func() {
-//		defer wg.Done()
-//		for i := 0; i < 1_000_000; i++ {
-//			c.Get(Key(strconv.Itoa(rand.Intn(1_000_000))))
-//		}
-//	}()
-//
-//	wg.Wait()
-//}
+func TestCacheMultithreading(t *testing.T) {
+	t.Skip() // Remove if task with asterisk completed
+
+	c := NewCache(10)
+	wg := &sync.WaitGroup{}
+	wg.Add(2)
+
+	go func() {
+		defer wg.Done()
+		for i := 0; i < 1_000_000; i++ {
+			c.Set(Key(strconv.Itoa(i)), i)
+		}
+	}()
+
+	go func() {
+		defer wg.Done()
+		for i := 0; i < 1_000_000; i++ {
+			c.Get(Key(strconv.Itoa(rand.Intn(1_000_000))))
+		}
+	}()
+
+	wg.Wait()
+}
