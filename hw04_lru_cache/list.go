@@ -11,8 +11,8 @@ type List interface {
 }
 
 type listItem struct {
-	Value interface{}
-	Next *listItem
+	Value    interface{}
+	Next     *listItem
 	Previous *listItem
 }
 
