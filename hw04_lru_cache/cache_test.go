@@ -1,12 +1,11 @@
 package hw04_lru_cache //nolint:golint,stylecheck
 
 import (
+	"github.com/stretchr/testify/require"
 	"math/rand"
 	"strconv"
 	"sync"
 	"testing"
-
-	"github.com/stretchr/testify/require"
 )
 
 func TestCache(t *testing.T) {
@@ -51,6 +50,17 @@ func TestCache(t *testing.T) {
 
 	t.Run("purge logic", func(t *testing.T) {
 		// Write me
+		c := NewCache(2)
+		inCache := c.Set("zzz", 123)
+		require.False(t, inCache)
+
+		inCache = c.Set("xxx", 321)
+		require.False(t, inCache)
+
+		c.Clear()
+		val, ok := c.Get("zzz")
+		require.False(t, ok)
+		require.Nil(t, val)
 	})
 }
 
