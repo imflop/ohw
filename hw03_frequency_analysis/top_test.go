@@ -7,7 +7,7 @@ import (
 )
 
 // Change to true if needed
-var taskWithAsteriskIsCompleted = false
+var taskWithAsteriskIsCompleted = true
 
 var text = `Как видите, он  спускается  по  лестнице  вслед  за  своим
 	другом   Кристофером   Робином,   головой   вниз,  пересчитывая
@@ -46,6 +46,23 @@ var text = `Как видите, он  спускается  по  лестни�
 func TestTop10(t *testing.T) {
 	t.Run("no words in empty string", func(t *testing.T) {
 		assert.Len(t, Top10(""), 0)
+	})
+
+	t.Run("most frequent word", func(t *testing.T) {
+		expected := "он"
+		assert.Equal(t, expected, Top10(text)[0])
+	})
+
+	t.Run("one word going to check", func(t *testing.T) {
+		expected := "однослово"
+		oneWord := "оДнОСлоВо"
+		assert.Equal(t, expected, Top10(oneWord)[0])
+	})
+
+	t.Run("foreign language", func(t *testing.T) {
+		expected := []string{"one", "and", "cat", "dog", "two", "cats", "man"}
+		txt := "cat and dog, one dog, two cats and one man"
+		assert.Subset(t, expected, Top10(txt))
 	})
 
 	t.Run("positive test", func(t *testing.T) {
